@@ -17,9 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QGuiApplication>
 #include <QApplication>
 #include <QQmlApplicationEngine>
+#include <QQuickImageProvider>
+#include <QQmlContext>
+#include <QFontDatabase>
+#include <QFontInfo>
 #include <QCommandLineParser>
 #include <QMetaObject>
 #include <QTranslator>
@@ -30,6 +33,51 @@
 #include "documenthandler.h"
 #include "highlightmodel.h"
 #include "texteditor.h"
+
+// Serves "image://icontheme/<name>" from the current icon theme
+// (used by the About dialog icon).
+class IconThemeImageProvider : public QQuickImageProvider
+{
+public:
+    IconThemeImageProvider() : QQuickImageProvider(QQuickImageProvider::Pixmap) {}
+
+    QPixmap requestPixmap(const QString &id, QSize *realSize, const QSize &requestedSize) override
+    {
+        const QSize size = requestedSize.isValid() ? requestedSize : QSize(64, 64);
+        if (realSize)
+            *realSize = size;
+
+        QIcon icon = QIcon::fromTheme(id);
+        if (icon.isNull())
+            icon = QIcon::fromTheme(QStringLiteral("accessories-text-editor"));
+        return icon.pixmap(size);
+    }
+};
+
+// Returns a monospace font family, falling back to the first installed
+// fixed-pitch family when the platform's fixed font does not resolve to one.
+static QString monospaceFamily()
+{
+    const QFont fixed = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+    if (QFontInfo(fixed).fixedPitch())
+        return fixed.family();
+
+    const QStringList preferred = {
+        QStringLiteral("Noto Sans Mono"), QStringLiteral("Noto Mono"),
+        QStringLiteral("DejaVu Sans Mono"), QStringLiteral("Liberation Mono"),
+        QStringLiteral("Hack"), QStringLiteral("JetBrains Mono"), QStringLiteral("Roboto Mono"),
+    };
+    const QStringList families = QFontDatabase::families();
+    for (const QString &family : preferred) {
+        if (families.contains(family))
+            return family;
+    }
+    for (const QString &family : families) {
+        if (QFontDatabase::isFixedPitch(family) && !QFontDatabase::isPrivateFamily(family))
+            return family;
+    }
+    return fixed.family();
+}
 
 QStringList formatUriList(const QStringList &list)
 {
@@ -70,12 +118,21 @@ void newTab(QObject *qmlObj)
 
 int main(int argc, char *argv[])
 {
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-#endif
-
     QApplication app(argc, argv);
     app.setOrganizationName("Lingmo");
+    app.setWindowIcon(QIcon::fromTheme("lingmo-texteditor"));
+
+    /** 加载翻译 */
+    QLocale locale;
+    QString qmFilePath = QString("%1/%2.qm").arg("/usr/share/lingmo-texteditor/translations/").arg(locale.name());
+    if (QFile::exists(qmFilePath)) {
+        QTranslator *translator = new QTranslator(QApplication::instance());
+        if (translator->load(qmFilePath)) {
+            QApplication::installTranslator(translator);
+        } else {
+            translator->deleteLater();
+        }
+    }
 
     qmlRegisterType<DocumentHandler>("Lingmo.TextEditor", 1, 0, "DocumentHandler");
     qmlRegisterType<FileHelper>("Lingmo.TextEditor", 1, 0, "FileHelper");
@@ -91,6 +148,8 @@ int main(int argc, char *argv[])
     HighlightModel m;
 
     QQmlApplicationEngine engine;
+    engine.addImageProvider(QStringLiteral("icontheme"), new IconThemeImageProvider);
+    engine.rootContext()->setContextProperty(QStringLiteral("monospaceFamily"), monospaceFamily());
     const QUrl url(QStringLiteral("qrc:/qml/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
@@ -99,6 +158,9 @@ int main(int argc, char *argv[])
     }, Qt::QueuedConnection);
 
     engine.load(url);
+
+    if (engine.rootObjects().isEmpty())
+        return -1;
 
     QObject *root = engine.rootObjects().first();
 
@@ -109,18 +171,6 @@ int main(int argc, char *argv[])
     }
     else
         newTab(root);
-
-    /** 加载翻译 */
-    QLocale locale;
-    QString qmFilePath = QString("%1/%2.qm").arg("/usr/share/lingmo-texteditor/translations/").arg(locale.name());
-    if (QFile::exists(qmFilePath)) {
-        QTranslator *translator = new QTranslator(QApplication::instance());
-        if (translator->load(qmFilePath)) {
-            QApplication::installTranslator(translator);
-        } else {
-            translator->deleteLater();
-        }
-    }
 
     return app.exec();
 }

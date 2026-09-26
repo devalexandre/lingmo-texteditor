@@ -2,14 +2,13 @@
  * Copyright (C) 2023 LingmoOS Team.
  */
 
-import QtQuick 2.15
-import QtQml 2.15
-import QtQuick.Window 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import Qt.labs.platform 1.1
-import QtQuick.Dialogs 1.3
-import LingmoUI 1.0 as LingmoUI
+import QtQuick
+import QtQml
+import QtQuick.Window
+import QtQuick.Controls
+import QtQuick.Layouts
+import Qt.labs.platform as Platform
+import LingmoUI.CompatibleModule 3.0 as LingmoUI
 import Lingmo.TextEditor 1.0
 
 Item {
@@ -37,49 +36,49 @@ Item {
         enableSyntaxHighlighting: true
         theme: LingmoUI.Theme.darkMode ? "Breeze Dark" : "Breeze Light"
 
-        onSearchFound: {
+        onSearchFound: function(start, end) {
             body.select(start, end)
         }
 
         onFileSaved: {
-            root.showPassiveNotification(qsTr("Saved successfully"), 3000)
+            root.notify(qsTr("Saved successfully"))
         }
     }
 
     // Global Menu
-    MenuBar {
+    Platform.MenuBar {
         id: appMenu
 
-        Menu {
+        Platform.Menu {
             title: qsTr("File")
 
-            MenuItem {
+            Platform.MenuItem {
                 text: qsTr("New")
                 onTriggered: root.addTab()
             }
 
-            MenuSeparator {}
+            Platform.MenuSeparator {}
 
-            MenuItem {
+            Platform.MenuItem {
                 text: qsTr("Open...")
                 onTriggered: root.open()
             }
 
-            MenuSeparator {}
+            Platform.MenuSeparator {}
 
-            MenuItem {
+            Platform.MenuItem {
                 text: qsTr("Save")
                 onTriggered: control.save()
                 enabled: document.modified
             }
-            MenuItem {
+            Platform.MenuItem {
                 text: qsTr("Save as...")
                 onTriggered: control.saveas()
             }
 
-            MenuSeparator {}
+            Platform.MenuSeparator {}
 
-            MenuItem {
+            Platform.MenuItem {
                 text: qsTr("Quit")
                 onTriggered: {
                     if (root.closeAll())
@@ -88,50 +87,50 @@ Item {
             }
         }
 
-        Menu {
+        Platform.Menu {
             title: qsTr("Edit")
 
-            MenuItem {
+            Platform.MenuItem {
                 text: qsTr("Select All")
                 onTriggered: body.selectAll()
             }
 
-            MenuSeparator {}
+            Platform.MenuSeparator {}
 
-            MenuItem {
+            Platform.MenuItem {
                 text: qsTr("Cut")
                 onTriggered: body.cut()
                 enabled: !(body.selectedText === "")
             }
-            MenuItem {
+            Platform.MenuItem {
                 text: qsTr("Copy")
                 onTriggered: body.copy()
                 enabled: !(body.selectedText === "")
             }
-            MenuItem {
+            Platform.MenuItem {
                 text: qsTr("Paste")
                 onTriggered: body.paste()
                 enabled: body.canPaste
             }
 
-            MenuSeparator {}
+            Platform.MenuSeparator {}
 
-            MenuItem {
+            Platform.MenuItem {
                 text: qsTr("Undo")
                 onTriggered: body.undo()
                 enabled: body.canUndo
             }
-            MenuItem {
+            Platform.MenuItem {
                 text: qsTr("Redo")
                 onTriggered: body.redo()
                 enabled: body.canRedo
             }
         }
 
-        Menu {
+        Platform.Menu {
             title: qsTr("Help")
 
-            MenuItem {
+            Platform.MenuItem {
                 text: qsTr("About Lingmo OS Text editor")
                 onTriggered: _aboutDialog.show()
             }
@@ -185,14 +184,14 @@ Item {
                 padding: LingmoUI.Units.smallSpacing
                 color: LingmoUI.Theme.textColor
 
-                font.family: "Noto Mono"
+                font.family: monospaceFamily
 
                 background: Rectangle {
                     color: LingmoUI.Theme.backgroundColor
                 }
 
                 Keys.enabled: true
-                Keys.onPressed: {
+                Keys.onPressed: function(event) {
                     if ((event.key === Qt.Key_S)
                             && (event.modifiers & Qt.ControlModifier)
                             && !(event.modifiers & Qt.ShiftModifier)) {
@@ -326,7 +325,7 @@ Item {
                     font.pointSize: body.font.pointSize
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
-                    font.family: "Monospace"
+                    font.family: monospaceFamily
                     text: index + 1
                 }
             }
@@ -344,28 +343,22 @@ Item {
         }
     }
 
-    FileDialog {
+    Platform.FileDialog {
         id: fileSaveAsDialog
         title: qsTr("Save as...")
-        folder: shortcuts.home
         nameFilters: [ qsTr("All files (*)") ]
-
-        selectExisting: false
-        selectFolder: false
-        selectMultiple: false
+        fileMode: Platform.FileDialog.SaveFile
 
         onAccepted: {
-            document.fileUrl = fileSaveAsDialog.fileUrl.toString()
             newFile = false
-            save()
+            document.saveAs(fileSaveAsDialog.file)
         }
-        Component.onCompleted: visible = false
     }
 
     function saveas() {
         fileSaveAsDialog.folder = (newFile
-            ? fileSaveAsDialog.shortcuts.documents
-            : document.fileUrl.toString().slice(0, -document.filename.length))
+            ? Platform.StandardPaths.writableLocation(Platform.StandardPaths.DocumentsLocation)
+            : document.fileUrl.toString().slice(0, -document.fileName.length))
         fileSaveAsDialog.open()
     }
 
@@ -373,6 +366,6 @@ Item {
         if(newFile)
             saveas()
         else if(documentModified)
-            document.saveAs(document.fileUrl) 
+            document.saveAs(document.fileUrl)
     }
 }

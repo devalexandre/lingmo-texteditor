@@ -14,3 +14,8 @@ void FileHelper::addPath(const QString &path)
     else
         emit unavailable(path);
 }
+
+QString FileHelper::toLocalFile(const QUrl &url) const
+{
+    return url.isLocalFile() ? url.toLocalFile() : url.toString();
+}

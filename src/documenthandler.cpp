@@ -10,7 +10,8 @@
 #include <QQmlFileSelector>
 #include <QQuickTextDocument>
 #include <QTextCharFormat>
-#include <QTextCodec>
+#include <QStringConverter>
+#include <QStringDecoder>
 #include <QTextDocument>
 #include <QTextDocumentWriter>
 #include <QUrl>
@@ -36,7 +37,7 @@ Alerts::Alerts(QObject *parent)
 Alerts::~Alerts()
 {
     qDebug() << "REMOVING ALL DOCUMENTS ALERTS" << this->m_alerts.size();
-    for (auto *alert : qAsConst(m_alerts)) {
+    for (auto *alert : std::as_const(m_alerts)) {
         delete alert;
         alert = nullptr;
     }
@@ -65,7 +66,7 @@ QHash<int, QByteArray> Alerts::roleNames() const
 
 bool Alerts::contains(DocumentAlert *const alert)
 {
-    for (const auto &alert_ : qAsConst(m_alerts)) {
+    for (const auto &alert_ : std::as_const(m_alerts)) {
         if (alert_->getId() == alert->getId())
             return true;
     }
@@ -103,8 +104,9 @@ void FileLoader::loadFile(const QUrl &url)
 
     if (file.open(QFile::ReadOnly)) {
         const auto array = file.readAll();
-        QTextCodec *codec = QTextDocumentWriter(url.toLocalFile()).codec();
-        emit this->fileReady(codec->toUnicode(array), url);
+        const auto encoding = QStringConverter::encodingForData(array).value_or(QStringConverter::Utf8);
+        QStringDecoder decoder(encoding);
+        emit this->fileReady(decoder(array), url);
     }
 }
 
@@ -476,7 +478,7 @@ QString DocumentHandler::fontFamily() const
 void DocumentHandler::setFontFamily(const QString &family)
 {
     QTextCharFormat format;
-    format.setFontFamily(family);
+    format.setFontFamilies({family});
     mergeFormatOnWordOrSelection(format);
     emit fontFamilyChanged();
 }
@@ -754,7 +756,15 @@ void DocumentHandler::saveAs(const QUrl &url)
         return;
 
     m_fileUrl = url;
+    m_fileName = QFileInfo(filePath).fileName();
+    this->m_watcher->removePaths(this->m_watcher->files());
+    this->m_watcher->addPath(filePath);
+    emit fileNameChanged();
     emit fileUrlChanged();
+    emit fileInfoChanged();
+
+    if (m_enableSyntaxHighlighting)
+        this->setFormatName(DocumentHandler::getLanguageNameFromFileName(m_fileUrl));
 }
 
 const QString DocumentHandler::getLanguageNameFromFileName(const QUrl &fileName)

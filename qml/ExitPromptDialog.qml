@@ -2,11 +2,11 @@
  * Copyright (C) 2023 Lingmo OS Team.
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.12
-import QtQuick.Window 2.12
-import LingmoUI 1.0 as LingmoUI
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtQuick.Window
+import LingmoUI.CompatibleModule 3.0 as LingmoUI
 
 LingmoUI.Window {
     id: control

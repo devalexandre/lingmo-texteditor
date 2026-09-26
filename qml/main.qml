@@ -2,12 +2,12 @@
  * Copyright (C) 2023 LingmoOS Team.
  */
 
-import QtQuick 2.15
-import QtQuick.Window 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import QtQuick.Dialogs 1.3
-import LingmoUI 1.0 as LingmoUI
+import QtQuick
+import QtQuick.Window
+import QtQuick.Controls
+import QtQuick.Layouts
+import Qt.labs.platform as Platform
+import LingmoUI.CompatibleModule 3.0 as LingmoUI
 import Lingmo.TextEditor 1.0
 
 LingmoUI.Window {
@@ -22,13 +22,51 @@ LingmoUI.Window {
     FileHelper {
         id: fileHelper
 
-        onNewPath: {
+        onNewPath: function(path) {
             _tabView.addTab(textEditorComponent, { fileUrl: "file://" + path, newFile: false })
         }
 
-        onUnavailable: {
-            root.showPassiveNotification(qsTr("%1 doesn't exists").arg(path), 3000)
+        onUnavailable: function(path) {
+            root.notify(qsTr("%1 doesn't exists").arg(path))
         }
+    }
+
+    // Passive notification (LingmoUI.Toast is not usable on Qt 6 yet)
+    Popup {
+        id: _toast
+        parent: Overlay.overlay
+        x: Math.round((root.width - width) / 2)
+        y: root.height - height - _bottomItem.height - LingmoUI.Units.largeSpacing
+        modal: false
+        focus: false
+        closePolicy: Popup.NoAutoClose
+        padding: LingmoUI.Units.largeSpacing
+
+        property alias text: _toastLabel.text
+
+        background: Rectangle {
+            radius: LingmoUI.Theme.mediumRadius
+            color: LingmoUI.Theme.secondBackgroundColor
+            border.width: 1
+            border.color: LingmoUI.Theme.darkMode ? Qt.rgba(1, 1, 1, 0.15) : Qt.rgba(0, 0, 0, 0.15)
+        }
+
+        contentItem: Label {
+            id: _toastLabel
+            color: LingmoUI.Theme.textColor
+        }
+
+        Timer {
+            id: _toastTimer
+            onTriggered: _toast.close()
+        }
+    }
+
+    function notify(message) {
+        _toast.text = message
+        _toastTimer.interval = 3000
+        _toastTimer.restart()
+        _toast.open()
     }
 
     ExitPromptDialog {
@@ -94,10 +132,10 @@ LingmoUI.Window {
         id: _dropArea
         anchors.fill: parent
 
-        onDropped: {
+        onDropped: function(drop) {
             if (drop.hasUrls) {
                 for (var i = 0; i < drop.urls.length; ++i) {
-                    root.addPath(drop.urls[i])
+                    root.addPath(fileHelper.toLocalFile(drop.urls[i]))
                 }
             }
         }
@@ -148,21 +186,17 @@ LingmoUI.Window {
         _tabView.currentItem.forceActiveFocus()
     }
 
-    FileDialog {
+    Platform.FileDialog {
         id: fileOpenDialog
         title: qsTr("Open...")
-        folder: shortcuts.home
+        folder: Platform.StandardPaths.writableLocation(Platform.StandardPaths.HomeLocation)
         nameFilters: [ qsTr("All files (*)") ]
-
-        selectExisting: true
-        selectFolder: false
-        selectMultiple: true
+        fileMode: Platform.FileDialog.OpenFiles
 
         onAccepted: {
-            for (var i = 0; i < fileOpenDialog.fileUrls.length; i++)
-                addPath(fileOpenDialog.fileUrls[i].toString().substr(7))
+            for (var i = 0; i < fileOpenDialog.files.length; i++)
+                addPath(fileHelper.toLocalFile(fileOpenDialog.files[i]))
         }
-        Component.onCompleted: visible = false
     }
 
     function open() {
@@ -174,22 +208,30 @@ LingmoUI.Window {
             var obj = _tabView.contentModel.get(i)
             if (obj.documentModified) {
                 exitPrompt.index = -1
-                exitPrompt.visible = true
+                showExitPrompt()
                 return false
             }
         }
         return true
     }
 
-    onClosing: {
+    onClosing: function(close) {
         close.accepted = closeAll()
+    }
+
+    function showExitPrompt() {
+        exitPrompt.x = root.x + Math.round((root.width - exitPrompt.width) / 2)
+        exitPrompt.y = root.y + Math.round((root.height - exitPrompt.height) / 2)
+        exitPrompt.visible = true
+        exitPrompt.raise()
+        exitPrompt.requestActivate()
     }
 
     function closeProtection(index) {
         var obj = _tabView.contentModel.get(index)
         if (obj.documentModified) {
             exitPrompt.index = index
-            exitPrompt.visible = true
+            showExitPrompt()
             return
         }
 

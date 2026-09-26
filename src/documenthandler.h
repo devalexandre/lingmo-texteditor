@@ -59,11 +59,11 @@
 #include <QThread>
 #include <QTimer>
 #include <QUrl>
+#include <QQuickTextDocument>
 
 QT_BEGIN_NAMESPACE
 class QFileSystemWatcher;
 class QTextDocument;
-class QQuickTextDocument;
 QT_END_NAMESPACE
 
 namespace KSyntaxHighlighting
@@ -257,7 +257,6 @@ class DocumentHandler : public QObject
     Q_PROPERTY(int fontSize READ fontSize WRITE setFontSize NOTIFY fontSizeChanged)
     Q_PROPERTY(qreal tabSpace READ tabSpace WRITE setTabSpace NOTIFY tabSpaceChanged)
 
-    Q_PROPERTY(QString fileName READ fileName NOTIFY fileUrlChanged)
     Q_PROPERTY(QString fileType READ fileType NOTIFY fileUrlChanged)
 
     Q_PROPERTY(QVariantMap fileInfo READ fileInfo NOTIFY fileInfoChanged)
