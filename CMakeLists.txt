@@ -50,3 +50,15 @@ install(FILES
     DESTINATION /usr/share/applications/
     COMPONENT Runtime
 )
+
+# Local notebook, shipped alongside the text editor.
+add_executable(lingmo-notes
+  notes/main.cpp
+  notes/markdown.cpp notes/markdown.h
+  notes/blockmodel.cpp notes/blockmodel.h
+  notes/pagetreemodel.cpp notes/pagetreemodel.h
+  notes/notestore.cpp notes/notestore.h
+  notes/notes.qrc)
+target_link_libraries(lingmo-notes PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Qml Qt6::Quick Qt6::QuickControls2)
+install(TARGETS lingmo-notes RUNTIME DESTINATION bin)
+install(FILES lingmo-notes.desktop DESTINATION share/applications)

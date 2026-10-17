@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Lingmo Notes
+Name[pt_BR]=Notas
+Comment=Local pages, search and Markdown
+Comment[pt_BR]=Páginas locais, busca e Markdown
+Exec=lingmo-notes
+Icon=lingmo-texteditor
+Categories=Utility;TextEditor;
+Terminal=false
+StartupNotify=true

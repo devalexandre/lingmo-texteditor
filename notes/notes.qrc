@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/notes">
+        <file>Main.qml</file>
+        <file>Sidebar.qml</file>
+        <file>PageView.qml</file>
+        <file>BlockDelegate.qml</file>
+        <file>SlashMenu.qml</file>
+        <file>QuickSearch.qml</file>
+        <file>EmojiPicker.qml</file>
+        <file>PageMenu.qml</file>
+        <file>MovePopup.qml</file>
+        <file>TrashPopup.qml</file>
+    </qresource>
+</RCC>
