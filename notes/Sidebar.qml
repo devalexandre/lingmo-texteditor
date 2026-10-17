@@ -51,8 +51,8 @@ Item {
         }
     }
 
-    // One page: a SideBarItem with the tree arrow and the page's emoji drawn
-    // in its indent, plus "⋯" / "+" buttons while hovered.
+    // One page: a SideBarItem with the tree arrow and the page's emoji in its
+    // leading slot, plus "⋯" / "+" buttons while hovered.
     component PageRow: Item {
         id: row
         property string pageId
@@ -66,9 +66,6 @@ Item {
 
         readonly property int arrowWidth: 20
         readonly property int levelIndent: 14
-        readonly property int iconSlot: LingmoUI.Units.iconSizes.small
-        readonly property int iconGap: LingmoUI.Units.smallSpacing * 1.5
-        readonly property real treeIndent: treeMode ? depth * levelIndent + arrowWidth - 4 : 0
         readonly property color fg: current ? LingmoUI.Theme.highlightedTextColor : LingmoUI.Theme.textColor
         readonly property bool hovered: rowHover.hovered
 
@@ -83,10 +80,46 @@ Item {
             title: row.title
             // Pages without an emoji get a document icon from the theme
             iconName: row.icon === "" ? "text-x-generic" : ""
-            indent: row.treeIndent + (row.icon !== "" ? row.iconSlot + row.iconGap : 0)
+            // The arrow starts a little further left than the row's text
+            indent: row.treeMode ? row.depth * row.levelIndent - LingmoUI.Units.smallSpacing : 0
             isCurrent: row.current
             onClicked: root.openPage(row.pageId)
             onRightClicked: root.showPageMenu(row.pageId, row, rowHover.point.position.x, rowHover.point.position.y)
+
+            leading: [
+                // Expand / collapse arrow
+                Rectangle {
+                    visible: row.treeMode
+                    implicitWidth: row.arrowWidth
+                    implicitHeight: row.arrowWidth
+                    radius: LingmoUI.Theme.tinyRadius
+                    color: arrowHover.hovered ? Qt.rgba(row.fg.r, row.fg.g, row.fg.b, 0.15) : "transparent"
+                    Behavior on color { ColorAnimation { duration: LingmoUI.Units.veryShortDuration } }
+                    LingmoUI.IconItem {
+                        anchors.centerIn: parent
+                        width: LingmoUI.Units.iconSizes.small
+                        height: width
+                        source: "pan-end-symbolic"
+                        color: row.fg
+                        opacity: row.hasChildren ? 0.85 : 0.35
+                        rotation: row.expanded ? 90 : 0
+                        Behavior on rotation { NumberAnimation { duration: LingmoUI.Units.shortDuration; easing.type: LingmoUI.Units.easing } }
+                    }
+                    HoverHandler { id: arrowHover }
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: notes.toggleExpanded(row.pageId)
+                    }
+                },
+                // The page's own emoji (user content), in place of the icon
+                Label {
+                    visible: row.icon !== ""
+                    Layout.preferredWidth: LingmoUI.Units.iconSizes.small
+                    horizontalAlignment: Text.AlignHCenter
+                    text: row.icon
+                    font.pointSize: LingmoUI.Units.fontBody
+                }
+            ]
 
             LingmoUI.IconButton {
                 id: moreButton
@@ -103,43 +136,6 @@ Item {
                 tipText: qsTr("Adicionar uma página dentro")
                 onClicked: root.newPage(row.pageId)
             }
-        }
-
-        // Expand / collapse arrow
-        Rectangle {
-            visible: row.treeMode
-            x: LingmoUI.Units.smallSpacing + row.depth * row.levelIndent
-            anchors.verticalCenter: parent.verticalCenter
-            width: row.arrowWidth
-            height: row.arrowWidth
-            radius: LingmoUI.Theme.tinyRadius
-            color: arrowHover.hovered ? Qt.rgba(row.fg.r, row.fg.g, row.fg.b, 0.15) : "transparent"
-            Behavior on color { ColorAnimation { duration: LingmoUI.Units.veryShortDuration } }
-            LingmoUI.IconItem {
-                anchors.centerIn: parent
-                width: LingmoUI.Units.iconSizes.small
-                height: width
-                source: "pan-end-symbolic"
-                opacity: row.hasChildren ? 0.85 : 0.35
-                rotation: row.expanded ? 90 : 0
-                Behavior on rotation { NumberAnimation { duration: LingmoUI.Units.shortDuration; easing.type: LingmoUI.Units.easing } }
-            }
-            HoverHandler { id: arrowHover }
-            MouseArea {
-                anchors.fill: parent
-                onClicked: notes.toggleExpanded(row.pageId)
-            }
-        }
-
-        // The page's own emoji (user content), where the SideBarItem icon would be
-        Label {
-            visible: row.icon !== ""
-            x: LingmoUI.Units.largeSpacing + row.treeIndent
-            anchors.verticalCenter: parent.verticalCenter
-            width: row.iconSlot
-            horizontalAlignment: Text.AlignHCenter
-            text: row.icon
-            font.pointSize: LingmoUI.Units.fontBody
         }
     }
 
