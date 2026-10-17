@@ -38,21 +38,23 @@ LingmoUI.Window {
 
         Label {
             text: qsTr("The document has not been saved. Are you sure you want to close it?")
+            color: LingmoUI.Theme.textColor
+            font.pointSize: LingmoUI.Units.fontBody
         }
 
         RowLayout {
             spacing: LingmoUI.Units.largeSpacing
 
-            Button {
+            LingmoUI.ActionButton {
                 text: qsTr("Cancel")
                 Layout.fillWidth: true
                 onClicked: control.visible = false
             }
 
-            Button {
+            LingmoUI.ActionButton {
                 text: qsTr("Yes")
                 Layout.fillWidth: true
-                flat: true
+                destructive: true
                 onClicked: {
                     control.visible = false
                     control.okBtnClicked()

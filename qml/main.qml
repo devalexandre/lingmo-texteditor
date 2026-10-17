@@ -48,12 +48,20 @@ LingmoUI.Window {
             radius: LingmoUI.Theme.mediumRadius
             color: LingmoUI.Theme.secondBackgroundColor
             border.width: 1
-            border.color: LingmoUI.Theme.darkMode ? Qt.rgba(1, 1, 1, 0.15) : Qt.rgba(0, 0, 0, 0.15)
+            border.color: LingmoUI.Theme.borderColor
+
+            LingmoUI.Elevation {
+                anchors.fill: parent
+                z: -1
+                level: 2
+                radius: parent.radius
+            }
         }
 
         contentItem: Label {
             id: _toastLabel
             color: LingmoUI.Theme.textColor
+            font.pointSize: LingmoUI.Units.fontBody
         }
 
         Timer {
@@ -104,6 +112,7 @@ LingmoUI.Window {
             delegate: LingmoUI.TabButton {
                 id: _tabBtn
                 text: _tabView.contentModel.get(index).tabName
+                font.pointSize: LingmoUI.Units.fontBody
                 implicitHeight: _tabbar.height
                 implicitWidth: Math.min(_tabbar.width / _tabbar.count,
                                         _tabBtn.contentWidth)
@@ -171,6 +180,8 @@ LingmoUI.Window {
                 Label {
                     text: _tabView.currentItem ? qsTr("Characters %1").arg(_tabView.currentItem.characterCount)
                                                : ""
+                    color: LingmoUI.Theme.secondaryTextColor
+                    font.pointSize: LingmoUI.Units.fontCaption
                 }
             }
         }

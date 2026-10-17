@@ -40,6 +40,8 @@ LingmoUI.Window {
 
         Label {
             text: displayText
+            color: LingmoUI.Theme.textColor
+            font.pointSize: LingmoUI.Units.fontBody
         }
         ColumnLayout {
             spacing: LingmoUI.Units.largeSpacing
@@ -52,6 +54,10 @@ LingmoUI.Window {
                 autoScroll: true
                 selectByMouse: true
                 horizontalAlignment: TextInput.AlignLeft
+                color: LingmoUI.Theme.textColor
+                selectionColor: LingmoUI.Theme.highlightColor
+                selectedTextColor: LingmoUI.Theme.highlightedTextColor
+                font.pointSize: LingmoUI.Units.fontBody
                 text: fileUrl
 
                 onAccepted: {
@@ -64,10 +70,10 @@ LingmoUI.Window {
             RowLayout {
                 spacing: LingmoUI.Units.largeSpacing
 
-                Button {
+                LingmoUI.ActionButton {
                     text: qsTr("Yes")
                     Layout.fillWidth: true
-                    flat: true
+                    primary: true
 
                     onClicked: {
                         fileUrl = textInput.text
@@ -76,7 +82,7 @@ LingmoUI.Window {
                     }
                 }
 
-                Button {
+                LingmoUI.ActionButton {
                     text: qsTr("Cancel")
                     Layout.fillWidth: true
                     onClicked: control.visible = false

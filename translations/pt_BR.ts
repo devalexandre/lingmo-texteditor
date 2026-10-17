@@ -68,7 +68,7 @@
         <translation>O documento não foi salvo. Tem certeza de que deseja fechá-lo?</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+9"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
@@ -81,7 +81,7 @@
 <context>
     <name>FileSelectDialog</name>
     <message>
-        <location filename="../qml/FileSelectDialog.qml" line="+68"/>
+        <location filename="../qml/FileSelectDialog.qml" line="+74"/>
         <source>Yes</source>
         <translation>Sim</translation>
     </message>
@@ -120,12 +120,12 @@
     </message>
     <message>
         <location line="+5"/>
-        <location line="+273"/>
+        <location line="+272"/>
         <source>Save as...</source>
         <translation>Salvar como...</translation>
     </message>
     <message>
-        <location line="-266"/>
+        <location line="-265"/>
         <source>Quit</source>
         <translation>Sair</translation>
     </message>
@@ -185,7 +185,7 @@
         <translation>Um editor de texto feito especialmente para o Lingmo OS.</translation>
     </message>
     <message>
-        <location line="+206"/>
+        <location line="+205"/>
         <source>All files (*)</source>
         <translation>Todos os arquivos (*)</translation>
     </message>
@@ -203,12 +203,12 @@
         <translation>%1 não existe</translation>
     </message>
     <message>
-        <location line="+142"/>
+        <location line="+151"/>
         <source>Characters %1</source>
         <translation>Caracteres: %1</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+15"/>
         <source>Untitled</source>
         <translation>Sem título</translation>
     </message>

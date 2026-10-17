@@ -319,9 +319,8 @@ Item {
                 Label {
                     width: 32
                     height: parent.height
-                    opacity: isCurrentItem ? 1 : 0.7
                     color: isCurrentItem ? LingmoUI.Theme.highlightColor
-                                         : LingmoUI.Theme.textColor
+                                         : LingmoUI.Theme.secondaryTextColor
                     font.pointSize: body.font.pointSize
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
