@@ -1,0 +1,71 @@
+{
+  "format": "lingmo-intents",
+  "version": 1,
+  "app": "lingmo-notes",
+  "name": {"en": "Notes", "pt_BR": "Notas"},
+  "icon": "lingmo-notes",
+  "desktop": "lingmo-notes.desktop",
+  "dbus": {"service": "com.lingmo.Notes", "path": "/Intents"},
+  "intents": [
+    {
+      "id": "notes.create",
+      "title": {"en": "Create note", "pt_BR": "Criar nota"},
+      "description": {"en": "Creates a page in Lingmo Notes with a title and Markdown text.",
+                      "pt_BR": "Cria uma página no Lingmo Notas com título e texto em Markdown."},
+      "summary": {"en": "Create the note “{title}”", "pt_BR": "Criar a nota «{title}»"},
+      "icon": "document-new",
+      "capabilities": ["create"],
+      "assistantTool": "notes_write",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {"type": "string", "minLength": 1, "maxLength": 300, "title": {"en": "Title", "pt_BR": "Título"}},
+          "content": {"type": "string", "x-multiline": true, "default": "", "maxLength": 2000000,
+                      "title": {"en": "Content (Markdown)", "pt_BR": "Conteúdo (Markdown)"}}
+        },
+        "required": ["title"]
+      },
+      "result": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string", "title": {"en": "Page id", "pt_BR": "Id da página"}},
+          "title": {"type": "string", "title": {"en": "Title", "pt_BR": "Título"}}
+        }
+      },
+      "examples": {
+        "pt_BR": ["criar nota {title}", "nova nota {title}", "anotar {title}", "criar página {title}"],
+        "en": ["create note {title}", "new note {title}", "take a note {title}"]
+      }
+    },
+    {
+      "id": "notes.append",
+      "title": {"en": "Add to a note", "pt_BR": "Acrescentar a uma nota"},
+      "description": {"en": "Adds text to the end of a page (by id or title); creates the page when no page has that title.",
+                      "pt_BR": "Acrescenta texto ao fim de uma página (pelo id ou título); cria a página quando nenhuma tem esse título."},
+      "summary": {"en": "Add to the note “{page}”", "pt_BR": "Acrescentar à nota «{page}»"},
+      "icon": "document-edit",
+      "capabilities": ["write"],
+      "assistantTool": "notes_write",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "page": {"type": "string", "minLength": 1, "maxLength": 300, "title": {"en": "Page (title or id)", "pt_BR": "Página (título ou id)"}},
+          "text": {"type": "string", "x-multiline": true, "minLength": 1, "maxLength": 2000000, "title": {"en": "Text (Markdown)", "pt_BR": "Texto (Markdown)"}}
+        },
+        "required": ["page", "text"]
+      },
+      "result": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string", "title": {"en": "Page id", "pt_BR": "Id da página"}},
+          "title": {"type": "string", "title": {"en": "Title", "pt_BR": "Título"}},
+          "created": {"type": "boolean", "title": {"en": "New page", "pt_BR": "Página nova"}}
+        }
+      },
+      "examples": {
+        "pt_BR": ["acrescentar à nota {page} {text}", "adicionar na nota {page} {text}"],
+        "en": ["add to note {page} {text}", "append to note {page} {text}"]
+      }
+    }
+  ]
+}

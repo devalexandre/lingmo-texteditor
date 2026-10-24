@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=com.lingmo.Notes
+Exec=/usr/bin/lingmo-notes --intents

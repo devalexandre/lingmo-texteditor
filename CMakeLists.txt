@@ -62,3 +62,16 @@ add_executable(lingmo-notes
 target_link_libraries(lingmo-notes PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Qml Qt6::Quick Qt6::QuickControls2)
 install(TARGETS lingmo-notes RUNTIME DESTINATION bin)
 install(FILES lingmo-notes.desktop DESTINATION share/applications)
+
+# Lingmo Intents: notes.create / notes.append on com.lingmo.Notes /Intents
+# (D-Bus activation starts `lingmo-notes --intents` without a window)
+find_package(LingmoIntents 1.0 QUIET)
+if(LingmoIntents_FOUND)
+  target_sources(lingmo-notes PRIVATE notes/notesintents.cpp notes/notesintents.h)
+  target_compile_definitions(lingmo-notes PRIVATE HAVE_LINGMO_INTENTS)
+  target_link_libraries(lingmo-notes PRIVATE LingmoIntents::LingmoIntents)
+  include(GNUInstallDirs)
+  lingmo_install_intents(MANIFEST data/intents/lingmo-notes.json SERVICE data/com.lingmo.Notes.service)
+else()
+  message(WARNING "LingmoIntents not found: Notes is built without app actions (intents)")
+endif()

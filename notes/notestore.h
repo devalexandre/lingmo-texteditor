@@ -78,6 +78,13 @@ public:
 
     // Tests and helpers
     QString currentMarkdown() const { return m_blocks.markdown(); }
+
+    // Lingmo Intents (notes.create / notes.append): work on the files without
+    // opening the page in the editor. Empty id / false on failure (status set).
+    QString createPageWithContent(const QString &title, const QString &markdown, const QString &parentId = QString());
+    bool appendToPage(const QString &id, const QString &markdown);
+    // A page id, or the first page whose title is `ref` (case-insensitive)
+    QString findPage(const QString &ref) const;
     QString directory() const { return m_directory; }
 
 signals:

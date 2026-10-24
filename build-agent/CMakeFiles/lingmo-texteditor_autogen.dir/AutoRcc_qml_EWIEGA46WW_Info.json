@@ -1,0 +1,32 @@
+{
+	"BUILD_DIR" : "/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/build-agent/lingmo-texteditor_autogen",
+	"CMAKE_BINARY_DIR" : "/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/build-agent",
+	"CMAKE_CURRENT_BINARY_DIR" : "/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/build-agent",
+	"CMAKE_CURRENT_SOURCE_DIR" : "/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor",
+	"CMAKE_SOURCE_DIR" : "/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor",
+	"CROSS_CONFIG" : false,
+	"GENERATOR" : "Ninja",
+	"INCLUDE_DIR" : "/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/build-agent/lingmo-texteditor_autogen/include",
+	"INPUTS" : 
+	[
+		"/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/images/light/close.svg",
+		"/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/images/light/add.svg",
+		"/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/images/dark/close.svg",
+		"/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/images/dark/add.svg",
+		"/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/qml/TextEditor.qml",
+		"/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/qml/FileSelectDialog.qml",
+		"/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/qml/main.qml",
+		"/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/qml/ExitPromptDialog.qml"
+	],
+	"LOCK_FILE" : "/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/build-agent/CMakeFiles/lingmo-texteditor_autogen.dir/AutoRcc_qml_EWIEGA46WW_Lock.lock",
+	"MULTI_CONFIG" : false,
+	"OPTIONS" : [ "-name", "qml" ],
+	"OUTPUT_CHECKSUM" : "EWIEGA46WW",
+	"OUTPUT_NAME" : "qrc_qml.cpp",
+	"RCC_EXECUTABLE" : "/usr/lib/qt6/rcc",
+	"RCC_LIST_OPTIONS" : [ "--list" ],
+	"SETTINGS_FILE" : "/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/build-agent/CMakeFiles/lingmo-texteditor_autogen.dir/AutoRcc_qml_EWIEGA46WW_Used.txt",
+	"SOURCE" : "/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/qml.qrc",
+	"USE_BETTER_GRAPH" : true,
+	"VERBOSITY" : 0
+}

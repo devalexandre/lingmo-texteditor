@@ -295,6 +295,75 @@ QString NoteStore::createPage(const QString &parentId)
     return meta.id;
 }
 
+static constexpr qsizetype MaxPageBytes = 2 * 1024 * 1024;
+
+QString NoteStore::createPageWithContent(const QString &title, const QString &markdown, const QString &parentId)
+{
+    if (!save())
+        return QString();
+    if ((!parentId.isEmpty() && !m_pages.contains(parentId)) || markdown.toUtf8().size() > MaxPageBytes)
+        return QString();
+    PageMeta meta;
+    meta.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
+    meta.parent = parentId;
+    meta.title = QString(title).replace(QLatin1Char('\n'), QLatin1Char(' ')).replace(QLatin1Char('\r'), QLatin1Char(' ')).trimmed();
+    meta.order = nextOrder(parentId);
+    meta.created = meta.updated = QDateTime::currentDateTime();
+    if (!writeText(pagePath(meta.id), Notes::serializePage(meta, markdown)))
+        return QString();
+    m_pages.insert(meta.id, meta);
+    m_content.insert(meta.id, markdown);
+    rebuildTree();
+    emit pagesChanged();
+    return meta.id;
+}
+
+bool NoteStore::appendToPage(const QString &id, const QString &markdown)
+{
+    if (!Notes::isValidId(id) || !m_pages.contains(id) || !save())
+        return false;
+    bool ok = false;
+    const QString text = readFile(pagePath(id), &ok);
+    if (!ok)
+        return false;
+    Notes::PageFile page = Notes::parsePage(text);
+    QString body = page.body;
+    if (!body.trimmed().isEmpty() && !body.endsWith(QLatin1Char('\n')))
+        body += QLatin1Char('\n');
+    if (!body.trimmed().isEmpty())
+        body += QLatin1Char('\n');
+    body += markdown.trimmed() + QLatin1Char('\n');
+    if (body.toUtf8().size() > MaxPageBytes)
+        return false;
+    PageMeta meta = m_pages.value(id);
+    meta.title = page.meta.title.isEmpty() ? meta.title : page.meta.title;
+    meta.updated = QDateTime::currentDateTime();
+    if (!writeText(pagePath(id), Notes::serializePage(meta, body)))
+        return false;
+    m_pages.insert(id, meta);
+    m_content.insert(id, body);
+    if (id == m_currentId) {
+        m_loading = true;
+        m_blocks.setBlocks(Notes::parseBlocks(body));
+        m_loading = false;
+        m_dirty = false;
+        updateWordCount();
+    }
+    emit pagesChanged();
+    return true;
+}
+
+QString NoteStore::findPage(const QString &ref) const
+{
+    const QString r = ref.trimmed();
+    if (Notes::isValidId(r) && m_pages.contains(r))
+        return r;
+    for (const QString &id : orderedIds())
+        if (m_pages.value(id).title.trimmed().compare(r, Qt::CaseInsensitive) == 0)
+            return id;
+    return QString();
+}
+
 QString NoteStore::create(const QString &parentId)
 {
     if (!save())

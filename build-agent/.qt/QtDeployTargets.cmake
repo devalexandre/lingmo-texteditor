@@ -1,0 +1,5 @@
+set(__QT_DEPLOY_TARGETS "lingmo-texteditor;lingmo-notes")
+set(__QT_DEPLOY_TARGET_lingmo-texteditor_FILE /home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/build-agent/lingmo-texteditor)
+set(__QT_DEPLOY_TARGET_lingmo-texteditor_TYPE EXECUTABLE)
+set(__QT_DEPLOY_TARGET_lingmo-notes_FILE /home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/build-agent/lingmo-notes)
+set(__QT_DEPLOY_TARGET_lingmo-notes_TYPE EXECUTABLE)

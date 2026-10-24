@@ -1,0 +1,13 @@
+/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/build-agent/CMakeFiles/lingmo-texteditor.dir
+/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/build-agent/CMakeFiles/translations.dir
+/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/build-agent/CMakeFiles/lingmo-notes.dir
+/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/build-agent/CMakeFiles/edit_cache.dir
+/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/build-agent/CMakeFiles/rebuild_cache.dir
+/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/build-agent/CMakeFiles/list_install_components.dir
+/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/build-agent/CMakeFiles/install.dir
+/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/build-agent/CMakeFiles/install/local.dir
+/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/build-agent/CMakeFiles/install/strip.dir
+/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/build-agent/CMakeFiles/lingmo-texteditor_autogen_timestamp_deps.dir
+/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/build-agent/CMakeFiles/lingmo-texteditor_autogen.dir
+/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/build-agent/CMakeFiles/lingmo-notes_autogen_timestamp_deps.dir
+/home/devalexandre/projects/devalexandre/lingmo/lingmo-texteditor/build-agent/CMakeFiles/lingmo-notes_autogen.dir

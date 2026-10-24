@@ -9,3 +9,4 @@ Icon=lingmo-notes
 Categories=Utility;TextEditor;
 Terminal=false
 StartupNotify=true
+X-Lingmo-Intents=notes.create;notes.append;
